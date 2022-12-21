@@ -4,7 +4,7 @@ Gettext Translator
 Gettext Translator based on Schmutzka gettexttranslator. 
 
 This tool that enables simple and user friendly translation of your texts via panel in debug bar.
-Works with the Nette 2.2. Do not use with 2.0!
+Works only with the Nette 2.3.10
 
 No need to edit or operate with .po/.mo files.
 
@@ -15,11 +15,11 @@ Installation and usage
 
 ```yaml
 translator:
-			class: GettextTranslator\Gettext
-			setup:
-				- setDebugMode(%debugMode%) # sets debug mode
-				- addFile(%appDir%/lang, translations) # adds lang directory with identifier "translations"
-				- GettextTranslator\Panel::register # registers translation panel
+    class: GettextTranslator\Gettext
+    setup:
+        - setDebugMode(%debugMode%) # sets debug mode
+        - addFile(%appDir%/lang, translations) # adds lang directory with identifier "translations"
+        - GettextTranslator\Panel::register # registers translation panel
 ```
 
 
