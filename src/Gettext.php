@@ -68,10 +68,11 @@ class Gettext extends Nette\Object implements Nette\Localization\ITranslator
      */
     public function setDebugMode($debugMode)
     {
-        $this->debugMode = $debugMode;
-        if ($debugMode === true) {
+        $this->debugMode = (bool)$debugMode;
+        if ($debugMode) {
             $this->sessionStorage = $this->session->getSection(self::$namespace);
         }
+        return $this;
     }
 
     /**
@@ -191,7 +192,7 @@ class Gettext extends Nette\Object implements Nette\Localization\ITranslator
             }
 
         } else {
-            if ($this->debugMode === true && (!$this->httpResponse->isSent() || $this->sessionStorage)) {
+            if ($this->debugMode && (!$this->httpResponse->isSent() || $this->sessionStorage)) {
                 if (!isset($this->sessionStorage->newStrings[$this->lang])) {
                     $this->sessionStorage->newStrings[$this->lang] = array();
                 }
@@ -256,7 +257,7 @@ class Gettext extends Nette\Object implements Nette\Localization\ITranslator
         $newStrings = array();
         $result = array();
 
-        if ($this->debugMode === true && isset($this->sessionStorage->newStrings[$this->lang])) {
+        if ($this->debugMode && isset($this->sessionStorage->newStrings[$this->lang])) {
             foreach (array_keys($this->sessionStorage->newStrings[$this->lang]) as $original) {
                 if (trim($original) != '') {
                     $newStrings[$original] = false;

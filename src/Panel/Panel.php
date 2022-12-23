@@ -1,11 +1,14 @@
 <?php
 
-namespace GettextTranslator;
+namespace GettextTranslator\Panel;
 
+use GettextTranslator\Gettext;
 use Nette;
+use Tracy\Debugger;
+use Tracy\IBarPanel;
 
 
-class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
+class Panel extends Nette\Object implements IBarPanel
 {
 
     /** @var string */
@@ -141,7 +144,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
      */
     private function processRequest()
     {
-        if ($this->httpRequest->isPost() && $this->httpRequest->isAjax() && $this->httpRequest->getHeader($this->xhrHeader)) {
+        if ($this->httpRequest->isMethod('POST') && $this->httpRequest->isAjax() && $this->httpRequest->getHeader($this->xhrHeader)) {
             $data = json_decode(file_get_contents('php://input'));
 
             if ($data) {
@@ -194,19 +197,19 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
         }
     }
 
-
     /**
      * Register this panel
-     * @param Nette\Application\Application
-     * @param GettextTranslator\Gettext
-     * @param Nette\Http\Session
-     * @param Nette\Http\Request
-     * @param int
-     * @param int
+     * @param \Nette\Application\Application $application
+     * @param \GettextTranslator\Gettext $translator
+     * @param \Nette\Http\Session $session
+     * @param \Nette\Http\Request $httpRequest
+     * @param $layout
+     * @param $height
+     * @return void
      */
     public static function register(Nette\Application\Application $application, Gettext $translator, Nette\Http\Session $session, Nette\Http\Request $httpRequest, $layout = null, $height = null)
     {
-        Nette\Diagnostics\Debugger::getBar()->addPanel(new static($application, $translator, $session, $httpRequest, $layout, $height));
+        Debugger::getBar()->addPanel(new static($application, $translator, $session, $httpRequest, $layout, $height));
     }
 
 
@@ -218,7 +221,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
     protected function getActiveFile($files)
     {
         if ($this->application == null) {
-            return;
+            return null;
         }
 
         $tmp = explode(':', $this->application->presenter->name);

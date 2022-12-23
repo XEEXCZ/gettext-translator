@@ -18,12 +18,16 @@ class Extension extends Nette\DI\CompilerExtension
         'files' => array(),
         'layout' => 'horizontal',
         'height' => 465,
+        'debugger' => '%debugMode%',
+        'visible' => '%debugMode%',
     );
 
 
     public function loadConfiguration()
     {
         $config = $this->getConfig($this->defaults);
+        $config = Nette\DI\Helpers::expand($config, $this->validateConfig($this->config));
+
         if (count($config['files']) === 0) {
             throw new InvalidConfigException('At least one language file must be defined.');
         }
@@ -33,8 +37,7 @@ class Extension extends Nette\DI\CompilerExtension
         $translator = $builder->addDefinition($this->prefix('translator'));
         $translator->setClass('GettextTranslator\Gettext', array('@session', '@cacheStorage', '@httpResponse'));
         $translator->addSetup('setLang', array($config['lang']));
-        $translator->addSetup('setProductionMode', array($builder->expand('%productionMode%')));
-
+        $translator->addSetup('setProductionMode', array($config['debugger'] !== true));
         $fileManager = $builder->addDefinition($this->prefix('fileManager'));
         $fileManager->setClass('GettextTranslator\FileManager');
 
@@ -42,7 +45,9 @@ class Extension extends Nette\DI\CompilerExtension
             $translator->addSetup('addFile', array($file, $id));
         }
 
-        $translator->addSetup('GettextTranslator\Panel::register', array('@application', '@self', '@session', '@httpRequest', $config['layout'], $config['height']));
+        if ($config['visible']) {
+            $translator->addSetup('GettextTranslator\Panel\Panel::register', array('@application', '@self', '@session', '@httpRequest', $config['layout'], $config['height']));
+        }
     }
 
 }

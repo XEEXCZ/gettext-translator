@@ -32,13 +32,13 @@
         }
     ],
     "autoload": {
-        "classmap": [
-            "GettextTranslator/"
-        ]
+        "psr-4": {
+            "GettextTranslator\\": "src/"
+        }
     },
     "require": {
         "php": "^7.0",
-        "nette/nette": "v2.3.10",
+        "nette/nette": "~v2.3.0",
         "ext-json": "*"
     },
     "require-dev": {
